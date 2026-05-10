@@ -106,12 +106,20 @@ const sendEmailNotification = async (to, subject, html) => {
  * @returns {Promise<Object>} The notification object
  */
 const sendInAppNotification = async (userId, type, message, metadata = {}) => {
-  // TODO: When notifications module is fully implemented, replace with:
-  //   const notificationsService = require('../modules/notifications/notifications.service');
-  //   return notificationsService.create({ userId, type, message, metadata });
-  // IMPORTANT: Call the module's SERVICE (public interface), never import the model directly.
+  const Notification = require('../modules/notifications/notifications.model');
+  const notification = await Notification.create({ userId, type, message, metadata });
 
-  const notification = { userId, type, message, metadata, isRead: false, createdAt: new Date() };
+  // Emitting the event directly via the global app io if possible
+  try {
+    const app = require('../app');
+    const io = app.get('io');
+    if (io) {
+      io.to(userId).emit('notification', notification);
+    }
+  } catch (err) {
+    logger.error('Failed to emit socket event:', err.message);
+  }
+
   logger.debug(`In-app notification: [${type}] for user ${userId} — "${message}"`);
   return notification;
 };
