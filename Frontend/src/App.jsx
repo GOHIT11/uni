@@ -47,7 +47,8 @@ export default function App() {
 
           {/* ── Protected app routes (wrapped in layout) ── */}
           <Route element={<ProtectedRoute><SocketProvider><MainLayout /></SocketProvider></ProtectedRoute>}>
-            <Route path="/dashboard" element={<FeedPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/feed" element={<FeedPage />} />
             <Route path="/resources" element={<ResourcesPage />} />
             <Route path="/events" element={<EventsPage />} />
             <Route path="/study-groups" element={<StudyGroupsPage />} />

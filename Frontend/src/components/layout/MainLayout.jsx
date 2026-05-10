@@ -7,14 +7,15 @@ export default function MainLayout() {
   const { user } = useAuth();
 
   const navItems = [
-    { name: 'Feed', path: '/dashboard', icon: Home },
+    { name: 'Dashboard', path: '/dashboard', icon: Home },
+    { name: 'Feed', path: '/feed', icon: MessageSquare },
     { name: 'Resources', path: '/resources', icon: BookOpen },
     { name: 'Events', path: '/events', icon: Calendar },
     { name: 'Study Groups', path: '/study-groups', icon: Users },
     { name: 'Marketplace', path: '/marketplace', icon: ShoppingBag },
     { name: 'Opportunities', path: '/opportunities', icon: Briefcase },
     { name: 'Teammates', path: '/teammates', icon: UserPlus },
-    { name: 'UniBot', path: '/chatbot', icon: MessageSquare },
+    { name: 'AI Doubt Solver', path: '/chatbot', icon: MessageSquare },
   ];
 
   return (
@@ -25,13 +26,24 @@ export default function MainLayout() {
           <Link to="/dashboard" className="text-xl font-bold bg-gradient-to-r from-primary-400 to-primary-300 bg-clip-text text-transparent">
             UniCampus
           </Link>
+
+          <div className="hidden md:flex flex-1 max-w-md mx-6">
+            <input type="text" placeholder="Search..." className="w-full bg-dark-800 border border-dark-700 rounded-lg px-4 py-1.5 text-sm text-dark-200 focus:outline-none focus:border-primary-500" />
+          </div>
+
           <div className="flex items-center gap-4">
+            <Link to="/chatbot" className="hidden sm:flex btn-primary px-3 py-1.5 text-xs rounded-lg gap-1 items-center">
+              <span>✨</span> AI Assistant
+            </Link>
+
+            <button className="hidden sm:block text-xs bg-dark-800 hover:bg-dark-700 border border-dark-700 px-3 py-1.5 rounded-lg text-dark-200 transition-colors">
+              Quick Upload
+            </button>
+
             <Link to="/notifications" className={`p-2 rounded-full hover:bg-dark-800 transition-colors ${pathname === '/notifications' ? 'text-primary-400' : 'text-dark-400'}`}>
               <Bell className="w-5 h-5" />
             </Link>
-            <Link to="/settings" className={`p-2 rounded-full hover:bg-dark-800 transition-colors ${pathname === '/settings' ? 'text-primary-400' : 'text-dark-400'}`}>
-              <Settings className="w-5 h-5" />
-            </Link>
+
             <Link to={`/u/${user?.email.split('@')[0]}`} className="w-8 h-8 rounded-full bg-dark-800 overflow-hidden flex items-center justify-center border border-dark-700">
               {user?.avatar ? <img src={user.avatar} alt="Profile" className="w-full h-full object-cover" /> : <User className="w-4 h-4 text-dark-400" />}
             </Link>
@@ -62,6 +74,12 @@ export default function MainLayout() {
               );
             })}
           </nav>
+
+          <div className="mt-8 pt-4 border-t border-dark-800">
+            <Link to="/settings" className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all ${pathname === '/settings' ? 'text-primary-400' : 'text-dark-400 hover:text-dark-200'}`}>
+              <Settings className="w-5 h-5" /> Settings
+            </Link>
+          </div>
         </aside>
 
         {/* Main Content Area */}
