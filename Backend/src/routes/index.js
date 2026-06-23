@@ -40,6 +40,9 @@ router.use('/auth', authRoutes);
 const usersRoutes = require('../modules/users/users.routes');
 router.use('/users', usersRoutes);
 
+const postsRoutes = require('../modules/posts/posts.routes');
+router.use('/posts', postsRoutes);
+
 const resourcesRoutes = require('../modules/resources/resources.routes');
 router.use('/resources', resourcesRoutes);
 

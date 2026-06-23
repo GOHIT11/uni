@@ -19,6 +19,8 @@
 require('dotenv').config();
 
 const app = require('./app');
+const http = require('http');
+const { Server } = require('socket.io');
 const { env, connectDB } = require('./config');
 const logger = require('./shared/utils/logger');
 const cron = require('node-cron');
@@ -33,8 +35,41 @@ const startServer = async () => {
     // ── Step 1: Connect to MongoDB ──
     await connectDB();
 
-    // ── Step 2: Start HTTP server ──
-    app.listen(env.PORT, () => {
+    // ── Step 2: Start HTTP server with Socket.io ──
+    const server = http.createServer(app);
+    const io = new Server(server, {
+      cors: {
+        origin: env.CLIENT_URL,
+        methods: ["GET", "POST"]
+      }
+    });
+
+    app.set('io', io); // Make io accessible in routes
+
+    io.on('connection', (socket) => {
+      logger.info(`Socket connected: ${socket.id}`);
+
+      socket.on('join', (userId) => {
+        socket.join(userId);
+        logger.info(`User ${userId} joined their personal room`);
+      });
+
+      socket.on('joinGroup', (groupId) => {
+        socket.join(groupId);
+        logger.info(`Socket ${socket.id} joined group ${groupId}`);
+      });
+
+      socket.on('leaveGroup', (groupId) => {
+        socket.leave(groupId);
+        logger.info(`Socket ${socket.id} left group ${groupId}`);
+      });
+
+      socket.on('disconnect', () => {
+        logger.info(`Socket disconnected: ${socket.id}`);
+      });
+    });
+
+    server.listen(env.PORT, () => {
       logger.info(
         `Server running in ${env.NODE_ENV} mode on port ${env.PORT}`
       );
